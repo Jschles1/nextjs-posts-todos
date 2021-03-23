@@ -4,11 +4,14 @@ import Logo from '../logo.svg';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
-    // textAlign: 'center',
     borderBottom: `1px solid ${theme.palette.primary.main}`,
+  },
+  flexContainer: {
     display: 'flex',
     alignItems: 'center',
+    padding: `${theme.spacing(1)}px ${theme.spacing(2)}px`,
+    maxWidth: 1440,
+    margin: '0 auto',
   },
   logoContainer: {
     backgroundColor: theme.palette.primary.main,
@@ -55,21 +58,24 @@ const Header = (props) => {
 
   return (
     <header className={classes.root}>
-      <div className={classes.logoContainer}>
-        <Logo className={classes.logo} />
+      <div className={classes.flexContainer}>
+        <div className={classes.logoContainer}>
+          <Logo className={classes.logo} />
+        </div>
+
+        <div className={classes.headerText}>JSON Placeholder</div>
+
+        <div className={classes.links}>
+          <Link href="/posts">
+            <a className={classes.link}>Posts</a>
+          </Link>
+
+          <Link href="/todos">
+            <a className={classes.link}>Todos</a>
+          </Link>
+        </div>
       </div>
-
-      <div className={classes.headerText}>JSON Placeholder</div>
-
-      <div className={classes.links}>
-        <Link href="/posts">
-          <a className={classes.link}>Posts</a>
-        </Link>
-
-        <Link href="/todos">
-          <a className={classes.link}>Todos</a>
-        </Link>
-      </div>
+      
     </header>
   )
 };
