@@ -4,7 +4,7 @@ import fetcher from '../fetcher';
 const baseURL = 'https://jsonplaceholder.typicode.com/posts';
 
 const usePosts = () => {
-  const { data, error } = useSWR(baseURL, fetcher);
+  const { data, error } = useSWR(baseURL, fetcher, { revalidateOnMount: false, revalidateOnFocus: false, revalidateOnReconnect: false });
 
   const update = (newPost) => {
     mutate(baseURL, async (posts) => {
