@@ -1,14 +1,14 @@
-import useSWR, { mutate } from 'swr';
+import useSWR, { cache } from 'swr';
 import fetcher from '../fetcher';
 
-const baseURL = 'https://jsonplaceholder.typicode.com/posts';
+const key = 'https://jsonplaceholder.typicode.com/posts';
 
 const usePosts = () => {
-  const { data, error } = useSWR(baseURL, fetcher, { revalidateOnMount: false, revalidateOnFocus: false, revalidateOnReconnect: false });
+  const { data, error, mutate } = useSWR(key, fetcher, { revalidateOnMount: !cache.has(key), revalidateOnFocus: false });
 
   const update = (newPost) => {
-    mutate(baseURL, async (posts) => {
-      const updatedPost = await fetch(`/api/todos/${newPost.id}`, {
+    mutate(key, async (posts) => {
+      const updatedPost = await fetch(`${key}/${newPost.id}`, {
         method: 'PATCH',
         body: JSON.stringify(newPost),
       });
