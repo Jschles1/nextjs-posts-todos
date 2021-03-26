@@ -1,20 +1,44 @@
-import useSWR, { cache } from 'swr';
+import useSWR, { cache, mutate } from 'swr';
 import fetcher from '../fetcher';
 
 const key = 'https://jsonplaceholder.typicode.com/posts';
 
 const usePosts = () => {
-  const { data, error, mutate } = useSWR(key, fetcher, { revalidateOnMount: !cache.has(key), revalidateOnFocus: false });
+  const { data, error } = useSWR(key, fetcher, { revalidateOnMount: !cache.has(key), revalidateOnFocus: false });
 
-  const update = (newPost) => {
+  const createPost = (newPost) => {
     mutate(key, async (posts) => {
-      const updatedPost = await fetch(`${key}/${newPost.id}`, {
-        method: 'PATCH',
+      await fetch(key, {
+        method: 'POST',
         body: JSON.stringify(newPost),
       });
 
+      return [...posts, newPost].sort((a, b) => a.id - b.id);;
+    }, false);
+  };
+
+  const updatePost = (newPost) => {
+    mutate(key, async (posts) => {
+      // const response = await fetch(`${key}/${newPost.id}`, {
+      //   method: 'PATCH',
+      //   body: JSON.stringify(newPost),
+      // });
+      // const updatedPost = await response.json();
+
       const filteredPosts = posts.filter((post) => post.id !== newPost.id);
-      return [...filteredPosts, updatedPost];
+      // return [...filteredPosts, updatedPost].sort((a, b) => a.id - b.id);
+      return [...filteredPosts, newPost].sort((a, b) => a.id - b.id);
+    }, false);
+  };
+
+  const deletePost = (id) => {
+    mutate(key, async (posts) => {
+      await fetch(`${key}/${id}`, {
+        method: 'DELETE',
+      });
+
+      const filteredPosts = posts.filter((post) => post.id !== id);
+      return filteredPosts;
     }, false);
   };
 
@@ -22,7 +46,9 @@ const usePosts = () => {
     posts: data,
     loading: !error && !data,
     error,
-    update,
+    createPost,
+    updatePost,
+    deletePost,
   };
 };
 
