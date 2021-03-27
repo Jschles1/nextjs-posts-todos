@@ -18,15 +18,8 @@ const usePosts = () => {
   };
 
   const updatePost = (newPost) => {
-    mutate(key, async (posts) => {
-      // const response = await fetch(`${key}/${newPost.id}`, {
-      //   method: 'PATCH',
-      //   body: JSON.stringify(newPost),
-      // });
-      // const updatedPost = await response.json();
-
+    mutate(key, (posts) => {;
       const filteredPosts = posts.filter((post) => post.id !== newPost.id);
-      // return [...filteredPosts, updatedPost].sort((a, b) => a.id - b.id);
       return [...filteredPosts, newPost].sort((a, b) => a.id - b.id);
     }, false);
   };
