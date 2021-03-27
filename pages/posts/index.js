@@ -1,5 +1,6 @@
 import PostLink from '../../src/components/PostLink';
 import LoadingSpinner from '../../src/components/LoadingSpinner';
+import AlertMessage from '../../src/components/AlertMessage';
 import usePosts from '../../src/data/hooks/usePosts';
 
 export default function Posts() {
@@ -21,6 +22,8 @@ export default function Posts() {
       <div>
         {postList}
       </div>
+
+      <AlertMessage />
     </div>
   );
 }

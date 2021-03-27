@@ -5,6 +5,7 @@ import { ThemeProvider } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Layout from '../src/components/Layout';
 import Header from '../src/components/Header';
+import { AlertProvider } from '../src/data/hooks/useAlertContext';
 import theme from '../src/theme';
 
 export default function MyApp(props) {
@@ -29,7 +30,9 @@ export default function MyApp(props) {
         <CssBaseline />
         <Header />
         <Layout>
-          <Component {...pageProps} />
+          <AlertProvider>
+            <Component {...pageProps} />
+          </AlertProvider>
         </Layout>
       </ThemeProvider>
     </React.Fragment>

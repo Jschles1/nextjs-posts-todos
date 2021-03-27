@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Card, CardHeader, CardMedia, CardActions, CardActionArea, CardContent, Button, TextField } from '@material-ui/core';
 import LoadingSpinner from '../../src/components/LoadingSpinner';
 import usePosts from '../../src/data/hooks/usePosts';
+import useAlertContext from '../../src/data/hooks/useAlertContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -34,12 +35,14 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Post = () => {
-  const { register, handleSubmit, setValue, reset } = useForm({
+  const { register, handleSubmit, setValue, reset, errors } = useForm({
     mode: 'onSubmit',
     reValidateMode: 'onBlur',
+    shouldUnregister: false,
   });
   const { query, push } = useRouter();
   const { posts, error, loading, updatePost, deletePost } = usePosts();
+  const [_, { setSuccessAlert }] = useAlertContext();
   const classes = useStyles();
   const [isEditing, setIsEditing] = useState(false);
   const id = query.id && parseInt(query.id[0]);
@@ -47,8 +50,6 @@ const Post = () => {
   if (loading) {
     return <LoadingSpinner />;
   }
-
-  console.log('posts', posts);
 
   if (!posts) {
     return null;
@@ -75,10 +76,11 @@ const Post = () => {
     reset();
   };
 
-  const handleOnSubmit = async (data) => {
+  const handleOnSubmit = (data) => {
     const { title, body } = data;
     const newPost = { ...post, title, body };
-    await updatePost(newPost);
+    updatePost(newPost);
+    setSuccessAlert('Post Updated!');
     push('/posts');
   };
   
@@ -119,6 +121,8 @@ const Post = () => {
       </>
     );
   };
+
+  console.log('errors', errors);
   
   return (
     <div className={classes.root}>
@@ -128,13 +132,15 @@ const Post = () => {
             <div className={classes.headerRoot}>
               {isEditing ? (
                 <TextField
-                  inputRef={register({ required: true })}
+                  inputRef={register({ required: 'Required Field' })}
                   classes={{ root: classes.inputRoot }}
                   multiline={true}
                   InputProps={{
                     classes: { root: classes.titleInputText },
                   }}
                   name="title"
+                  error={Boolean(errors.title)}
+                  helperText={errors.title?.message}
                 />
               ) : (
                 `${title}`
@@ -150,13 +156,15 @@ const Post = () => {
           <CardContent>
             {isEditing ? (
               <TextField
-                inputRef={register({ required: true })}
+                inputRef={register({ required: 'Required Field' })}
                 classes={{ root: classes.inputRoot }}
                 multiline={true}
                 InputProps={{
                   classes: { root: classes.bodyInputText },
                 }}
                 name="body"
+                error={Boolean(errors.body)}
+                helperText={errors.body?.message}
               />
             ) : (
               `${body}`
