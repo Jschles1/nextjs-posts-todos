@@ -68,6 +68,7 @@ const Post = () => {
 
   const handleDeleteClick = async () => {
     await deletePost(id);
+    setSuccessAlert('Post Deleted!');
     push('/posts');
   };
 
