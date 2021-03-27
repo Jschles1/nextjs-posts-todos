@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     margin: '0 auto',
-    width: 700,
+    width: 800,
   },
   headerRoot: {
     padding: theme.spacing(2),
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
   media: {
     height: 300,
     width: 700,
-  }
+  },
 }));
 
 const Post = () => {

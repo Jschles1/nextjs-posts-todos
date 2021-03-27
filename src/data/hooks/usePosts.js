@@ -8,12 +8,13 @@ const usePosts = () => {
 
   const createPost = (newPost) => {
     mutate(key, async (posts) => {
-      await fetch(key, {
+      const response = await fetch(key, {
         method: 'POST',
         body: JSON.stringify(newPost),
       });
+      const addedPost = await response.json();
 
-      return [...posts, newPost].sort((a, b) => a.id - b.id);;
+      return [...posts, { ...addedPost, ...newPost }].sort((a, b) => a.id - b.id);;
     }, false);
   };
 
