@@ -1,33 +1,28 @@
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/router';
 import { makeStyles } from '@material-ui/core/styles';
-import { Card, Button, TextField, FormControl } from '@material-ui/core';
+import { Dialog, DialogActions, DialogTitle, DialogContent, Button, TextField, FormControl } from '@material-ui/core';
 import usePosts from '../../src/data/hooks/usePosts';
 import useAlertContext from '../../src/data/hooks/useAlertContext';
 
 const useStyles = makeStyles((theme) => ({
-  root: {
-    marginTop: theme.spacing(5),
-  },
-  card: {
-    margin: '0 auto',
-    width: 800,
-    padding: theme.spacing(2),
-    '& h1': {
-      marginTop: 0,
-      marginBottom: theme.spacing(2),
-    },
+  header: {
+    margin: 0,
+    fontSize: 24,
   },
   controlRoot: {
-    marginBottom: theme.spacing(2),
+    marginBottom: theme.spacing(3),
   },
 }));
 
-export default function Create() {
+const PostForm = ({ open, onClose }) => {
+  const [_, { setSuccessAlert }] = useAlertContext();
+
+  return <PostFormComponent open={open} onClose={onClose} setSuccessAlert={setSuccessAlert} />;
+};
+
+const PostFormComponent = ({ open, onClose, setSuccessAlert }) => {
   const classes = useStyles();
   const { createPost } = usePosts();
-  const [_, { setSuccessAlert }] = useAlertContext();
-  const { push } = useRouter();
   const { register, handleSubmit, errors } = useForm({
     mode: 'onSubmit',
     reValidateMode: 'onBlur',
@@ -36,16 +31,25 @@ export default function Create() {
 
   const handleOnSubmit = async (data) => {
     await createPost(data);
+    onClose();
     setSuccessAlert('Post Created!');
-    push('/posts');
   };
 
   return (
-    <div className={classes.root}>
-      <Card className={classes.card}>
-        <h1>Create Post</h1>
-
-        <form onSubmit={handleSubmit(handleOnSubmit)}>
+    <Dialog 
+      open={open}
+      onClose={onClose}
+      fullWidth
+      disableBackdropClick
+      maxWidth="md"
+      scroll="paper"
+    >
+      <DialogTitle>
+        <h1 className={classes.header}>Create Post</h1>
+      </DialogTitle>
+      
+      <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <DialogContent dividers>
           <FormControl fullWidth classes={{ root: classes.controlRoot }}>
             <TextField
               inputRef={register({ required: 'Required Field' })}
@@ -67,6 +71,14 @@ export default function Create() {
               placeholder="Post Body"
             />
           </FormControl>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={onClose}
+            color="primary"
+          >
+            Cancel
+          </Button>
 
           <Button
             variant="contained"
@@ -75,8 +87,10 @@ export default function Create() {
           >
             Submit
           </Button>
-        </form>
-      </Card>
-    </div>
+        </DialogActions>
+      </form>
+    </Dialog>
   );
 };
+
+export default PostForm;
